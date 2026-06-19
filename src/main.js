@@ -8,7 +8,7 @@ const config = {
         default: 'matter', // BẮT BUỘC DÙNG MATTER.JS CHO GAME NÀY
         matter: {
             gravity: { y: 1.5 }, // Trọng lực khá mạnh để quả rơi nhanh
-            debug: true // BẬT DEBUG ĐỂ NHÌN THẤY HITBOX VẬT LÝ (Tắt ở Giai đoạn cuối)
+            debug: false // BẬT DEBUG ĐỂ NHÌN THẤY HITBOX VẬT LÝ (Tắt ở Giai đoạn cuối)
         }
     },
     scene: [BootScene, GameScene],

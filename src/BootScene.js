@@ -11,6 +11,12 @@ class BootScene extends Phaser.Scene {
         for (let i = 1; i <= 11; i++) {
             this.load.image(`fruit_${i}`, `fruit_${i}.png`);
         }
+
+        this.load.setPath('assets/audio/');
+        this.load.audio('pop_sound', 'pop_sound.mp3');         // Tiếng bọp khi gộp quả
+        this.load.audio('gameover_sound', 'gameover_sound.mp3'); // Tiếng báo thua cuộc
+
+         this.load.audio('bgm_theme', 'bgm_theme.mp3');
     }
 
     create() {
