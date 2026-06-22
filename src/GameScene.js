@@ -121,6 +121,11 @@ class GameScene extends Phaser.Scene {
         // Sinh quả hiện tại lên đỉnh đầu để chờ thả
         this.spawnCurrentFruit();
 
+        // =======================================================
+        // 4. HỆ THỐNG INPUT NÂNG CẤP ĐIỆN THOẠI (RELEASE TO DROP)
+        // =======================================================
+        
+        // A. KHI DI CHUYỂN (Quẹt ngón tay / Di chuột): Quả dưa trượt theo X
         this.input.on('pointermove', (pointer) => {
             if (this.canDrop && this.dummyFruit) {
                 let radius = this.fruitRadii[this.currentLevel];
@@ -129,28 +134,39 @@ class GameScene extends Phaser.Scene {
             }
         });
 
+        // B. KHI CHẠM NGÓN TAY XUỐNG: Chỉ hút quả dưa về tọa độ chạm, KHÔNG THẢ!
         this.input.on('pointerdown', (pointer) => {
             if (this.canDrop && this.dummyFruit) {
-                this.canDrop = false; 
+                let radius = this.fruitRadii[this.currentLevel];
+                let clampX = Phaser.Math.Clamp(pointer.x, 20 + radius, 520 - radius);
+                this.dummyFruit.setPosition(clampX, 100);
+            }
+        });
 
+        // C. KHI NHẤC NGÓN TAY LÊN (RELEASE): Chính thức thả rơi tự do!
+        this.input.on('pointerup', (pointer) => {
+            if (this.canDrop && this.dummyFruit) {
+                this.canDrop = false; // Khóa thả tiếp
+
+                // Lấy tọa độ x ngay tại thời điểm nhấc ngón tay ra
                 let dropX = this.dummyFruit.x;
-                let dropLevel = this.currentLevel; // Thả quả hiện tại
+                let dropLevel = this.currentLevel; 
 
+                // Xóa cái bóng đi
                 this.dummyFruit.destroy();
                 this.dummyFruit = null;
 
+                // Sinh quả thật rơi tự do xuống dưới
                 this.createRealFruit(dropX, 100, dropLevel);
                 
-                // --- MA THUẬT ĐẢO THẺ CHỜ ---
-                // Quả chờ (next) giờ biến thành quả thả (current)
+                // Đảo quả chờ thành quả thả tiếp theo
                 this.currentLevel = this.nextLevel;
-                // Xúc xắc ngẫu nhiên quả chờ mới
                 this.nextLevel = Phaser.Math.Between(1, 5);
 
-                // Chờ quả cũ rơi xuống, cập nhật bệ chờ và mọc quả mới
+                // Chờ 1 giây để mọc quả mới
                 this.time.delayedCall(1000, () => {
-                    this.updatePreviewVisual(); // Vẽ quả mới lên bệ chờ
-                    this.spawnCurrentFruit();   // Đẻ quả hiện tại lên đỉnh đầu
+                    this.updatePreviewVisual(); 
+                    this.spawnCurrentFruit();   
                 });
             }
         });
